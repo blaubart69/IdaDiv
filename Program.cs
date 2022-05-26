@@ -33,11 +33,10 @@ class Division
         }
 
         string strRest;
-        bool fertig = false;
         do
         {
             //
-            // pass wie oft rein?
+            // passt wie oft rein?
             //
             int quotient = Math.DivRem(tmp, divisor, out int rest);
             strRest = rest.ToString();
@@ -59,14 +58,13 @@ class Division
                 // Rest. fertig.
                 //
                 strRest += "R";
-                fertig = true;
             }
             //
             // Ausgabe
             //
             Console.WriteLine((new string(' ',stelle-1) + strRest).PadRight(rechnung.Length) + quotient);
         }
-        while (!fertig);
+        while (stelle < dividend.Length);
     }
 
     static bool isAllDigits(string str)
