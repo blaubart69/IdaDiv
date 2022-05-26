@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 
 namespace Spi;
@@ -24,37 +24,49 @@ class Division
         string rechnung = $"{dividend} : {divisor} = ";
         Console.WriteLine(rechnung);
 
-        int i=0;
+        int stelle=0;
         int tmp = Convert.ToInt32(dividend.Substring(0,1));
         if (tmp < divisor)
         {
-            ++i;
+            ++stelle;
             tmp = Convert.ToInt32(dividend.Substring(0,2));
         }
 
-        string line;
-        string strTmp;
-        bool end = false;
+        string strRest;
+        bool fertig = false;
         do
         {
-            int quotient = Math.DivRem(tmp, divisor, out int remainder);
-            strTmp = remainder.ToString();
-            ++i;
-            if ( i < dividend.Length )
+            //
+            // pass wie oft rein?
+            //
+            int quotient = Math.DivRem(tmp, divisor, out int rest);
+            strRest = rest.ToString();
+            ++stelle;
+            //
+            // ende erreicht?
+            //
+            if ( stelle < dividend.Length )
             {
-                strTmp += dividend[i];
-                tmp = Convert.ToInt32(strTmp);
+                //
+                // nächste Stelle herab
+                //
+                strRest += dividend[stelle];
+                tmp = Convert.ToInt32(strRest);
             }
             else
             {
-                strTmp += "R";
-                end = true;
+                //
+                // Rest. fertig.
+                //
+                strRest += "R";
+                fertig = true;
             }
-            line = new string(' ',i-1) + strTmp;
-            line = line.PadRight(rechnung.Length) + quotient;
-            Console.WriteLine(line);
+            //
+            // Ausgabe
+            //
+            Console.WriteLine((new string(' ',stelle-1) + strRest).PadRight(rechnung.Length) + quotient);
         }
-        while (!end);
+        while (!fertig);
     }
 
     static bool isAllDigits(string str)
