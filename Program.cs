@@ -1,3 +1,4 @@
+using System.Text;
 using System;
 using System.Linq;
 
@@ -21,7 +22,7 @@ class Division
     }
     static void Divide(string dividend, int divisor)
     {
-        string rechnung = $"{dividend} : {divisor} = ";
+        string rechnung = $"{dividend} : {divisor} =";
         Console.WriteLine(rechnung);
 
         int stelle=0;
@@ -36,7 +37,7 @@ class Division
         {
             strRest = dividend.Substring(0,1);
         }
-        
+        StringBuilder ergebnis = new StringBuilder(capacity: dividend.Length);
         do
         {
             //
@@ -66,8 +67,11 @@ class Division
             // Ausgabe
             //
             Console.WriteLine((new string(' ',stelle-1) + strRest).PadRight(rechnung.Length) + quotient);
+            ergebnis.Append(quotient);
         }
         while (stelle < dividend.Length);
+
+        Console.WriteLine($"\n{rechnung} {ergebnis} {strRest}");
     }
 
     static bool isAllDigits(string str)
