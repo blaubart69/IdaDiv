@@ -25,20 +25,24 @@ class Division
         Console.WriteLine(rechnung);
 
         int stelle=0;
-        int tmp = Convert.ToInt32(dividend.Substring(0,1));
-        if (tmp < divisor)
+        string strRest;
+
+        if ( (dividend[0]-'0') < divisor )
         {
             ++stelle;
-            tmp = Convert.ToInt32(dividend.Substring(0,2));
+            strRest = dividend.Substring(0,2);
         }
-
-        string strRest;
+        else
+        {
+            strRest = dividend.Substring(0,1);
+        }
+        
         do
         {
             //
             // passt wie oft rein?
             //
-            int quotient = Math.DivRem(tmp, divisor, out int rest);
+            int quotient = Math.DivRem(Convert.ToInt32(strRest), divisor, out int rest);
             strRest = rest.ToString();
             ++stelle;
             //
@@ -50,7 +54,6 @@ class Division
                 // nächste Stelle herab
                 //
                 strRest += dividend[stelle];
-                tmp = Convert.ToInt32(strRest);
             }
             else
             {
