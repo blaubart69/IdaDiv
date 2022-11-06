@@ -28,15 +28,19 @@ class Division
         int stelle=0;
         string strRest;
 
-        if ( (dividend[0]-'0') < divisor )
+        for (int i=1;;i++) 
         {
-            ++stelle;
-            strRest = dividend.Substring(0,2);
+            strRest = dividend.Substring(0,i);
+            if ( Convert.ToInt32(strRest) < divisor )
+            {
+                ++stelle;
+            }
+            else
+            {
+                break;
+            }
         }
-        else
-        {
-            strRest = dividend.Substring(0,1);
-        }
+
         StringBuilder ergebnis = new StringBuilder(capacity: dividend.Length);
         do
         {
@@ -96,10 +100,10 @@ class Division
             {
                 err = "Divident und Divisor müssen Zahlen sein";
             }
-            else if (divisor.Length > 1)
+            /*else if ( Convert.ToInt32(divisor) )
             {
                 err = "Der Divisor darf nur einstellig sein";
-            }
+            }*/
             else if ( "0".Equals(divisor) )
             {
                 err = "Divison durch Null scheidet völlig aus";
