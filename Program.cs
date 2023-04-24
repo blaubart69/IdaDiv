@@ -1,6 +1,8 @@
+using System.Linq.Expressions;
 using System.Text;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Spi;
 
@@ -15,69 +17,72 @@ class Division
         }
         else
         {
-            Divide(dividend, Convert.ToInt32(divisor)); 
+            Divide(dividend, Convert.ToInt32(divisor), out string result, out List<string> temps);
+            Console.WriteLine($"{dividend} : {divisor} = {result}"); 
+            foreach( string temp in temps )
+            {
+                Console.WriteLine(  temp);
+            }
         }
 
         return rc;
     }
-    static void Divide(string dividend, int divisor)
+    static void Divide(string dividend, int divisor, out string result, out List<string> tempResults)
     {
-        string rechnung = $"{dividend} : {divisor} =";
-        Console.WriteLine(rechnung);
-
-        int stelle=0;
-        string strRest;
-
-        for (int i=1;;i++) 
+        //
+        // finden wieviel Stellen gebraucht werden bis der Divisor reinpasst
+        //
+        int stelle = DigitCount(divisor);
+        string blanks;
+        if ( Convert.ToInt32(dividend.Substring(0,stelle)) < divisor )
         {
-            strRest = dividend.Substring(0,i);
-            if ( Convert.ToInt32(strRest) < divisor )
-            {
-                ++stelle;
-            }
-            else
-            {
-                break;
-            }
+            stelle += 1;
+            blanks = " ";
+        }
+        else
+        {
+            blanks = "";
         }
 
-        StringBuilder ergebnis = new StringBuilder(capacity: dividend.Length);
+        string strRest = dividend.Substring(0,stelle);
+        
+        result = String.Empty;
+        tempResults = new List<string>();
+        stelle -= 1;
+
+        int padCount = DigitCount(divisor);
         do
         {
             //
             // passt wie oft rein?
             //
-            int quotient = Math.DivRem(Convert.ToInt32(strRest), divisor, out int rest);
+            long quotient = Math.DivRem(Convert.ToInt64(strRest), divisor, out long rest);
+            result += quotient;
+
             strRest = rest.ToString();
+            strRest = strRest.PadLeft(padCount,'0');
             ++stelle;
-            //
-            // ende erreicht?
-            //
+
             if ( stelle < dividend.Length )
             {
-                //
-                // nächste Stelle herab
-                //
                 strRest += dividend[stelle];
             }
             else
             {
-                //
-                // Rest. fertig.
-                //
                 strRest += "R";
             }
-            //
-            // Ausgabe
-            //
-            Console.WriteLine((new string(' ',stelle-1) + strRest).PadRight(rechnung.Length) + quotient);
-            ergebnis.Append(quotient);
+
+            
+            tempResults.Add(blanks + strRest);
+            blanks += " ";
         }
         while (stelle < dividend.Length);
-
-        Console.WriteLine($"\n{rechnung} {ergebnis} {strRest}");
     }
 
+    static int DigitCount(long val)
+    {
+        return val.ToString().Length;
+    }
     static bool isAllDigits(string str)
     {
         return str.All(c => c >= '0' && c <= '9');
