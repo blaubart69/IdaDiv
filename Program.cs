@@ -112,17 +112,23 @@ class Division
             {
                 err = "Divident und Divisor müssen Zahlen sein";
             }
-            /*else if ( Convert.ToInt32(divisor) )
-            {
-                err = "Der Divisor darf nur einstellig sein";
-            }*/
-            else if ( "0".Equals(divisor) )
+            dividend = dividend.TrimStart('0');
+            divisor  = divisor.TrimStart('0');
+
+            if ( "0".Equals(divisor) )
             {
                 err = "Divison durch Null scheidet völlig aus";
             }
-            else if ( dividend.Length == 1 && dividend[0] < divisor[0] )
+            else if ( dividend.Length < divisor.Length )
             {
                 err = "Dividend muß größer Divisor sein";
+            }
+            else if ( dividend.Length == divisor.Length )
+            {
+                if ( dividend.CompareTo(divisor) < 0 )
+                {
+                    err = "Dividend muß größer Divisor sein";
+                }
             }
         }
 
