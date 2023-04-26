@@ -23,7 +23,6 @@ class Division
                 ,divisor
                 ,result
                 ,temps); 
-            
         }
 
         return rc;
@@ -61,9 +60,6 @@ class Division
 
         do
         {
-            //
-            // passt wie oft rein?
-            //
             long quotient = Math.DivRem(Convert.ToInt64(strRest), divisor, out long rest);
             result += quotient;
 
@@ -112,8 +108,14 @@ class Division
             {
                 err = "Divident und Divisor müssen Zahlen sein";
             }
-            dividend = dividend.TrimStart('0');
-            divisor  = divisor.TrimStart('0');
+            if ( dividend.Length > 1 )
+            {
+                dividend = dividend.TrimStart('0');
+            }
+            if ( divisor.Length > 1)
+            {
+                divisor  = divisor.TrimStart('0');
+            }
 
             if ( "0".Equals(divisor) )
             {
