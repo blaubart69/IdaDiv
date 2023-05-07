@@ -43,14 +43,12 @@ fn divide(dividend : &str, divisor : &str) -> (String,Vec<String>) {
         temp.push( dividend_digits.next().unwrap() );
     }
 
-    //let divisor_int = divisor.parse::<i64>().unwrap();
     let mut result = String::new();
     let mut temp_results = Vec::<String>::new();
 
     loop {
-        let (resultdigit,rest) = divrem_str(temp.as_str(), divisor);
-        result.push(resultdigit);
-        temp = rest;
+        let (how_much,rest) = divrem_str(temp.as_str(), divisor);
+        result.push(how_much);
         
         let herunter = match dividend_digits.next() {
             None => 'R',
@@ -58,12 +56,15 @@ fn divide(dividend : &str, divisor : &str) -> (String,Vec<String>) {
         };
 
         temp.push(herunter);
-        temp_results.push(temp.clone());
+        temp_results.push(temp);
 
         if herunter == 'R' {
             break;
         }
+
+        temp = rest;
     }
+
     (result, temp_results)
 }
 
