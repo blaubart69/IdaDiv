@@ -49,20 +49,19 @@ fn divide(dividend : &str, divisor : &str) -> (String,Vec<String>) {
     loop {
         let (how_much,rest) = divrem_str(temp.as_str(), divisor);
         result.push(how_much);
-        
+        temp = rest;
+
         let herunter = match dividend_digits.next() {
             None => 'R',
             Some(next_digit) => next_digit
         };
 
         temp.push(herunter);
-        temp_results.push(temp);
+        temp_results.push(temp.clone());
 
         if herunter == 'R' {
             break;
         }
-
-        temp = rest;
     }
 
     (result, temp_results)
