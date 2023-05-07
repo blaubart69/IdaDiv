@@ -4,13 +4,12 @@ fn main() {
     let args  = env::args().skip(1).collect();
     
     let (dividend,divisor) =
-        match read_args(args) {
+        match read_args(&args) {
             Err(e) => { eprintln!("{}",e); std::process::exit(8); },
             Ok(r) => r
         };
 
     let (result,temps) = divide(&dividend, &divisor);
-
     print_calculation(&dividend, &divisor, &result, &temps);
 }
 
@@ -18,6 +17,16 @@ fn divrem(a : i64, b: i64 ) -> (i64,i64) {
     let intdiv = a / b;
     let rem = a - ( b * intdiv );
     (intdiv,rem)
+}
+
+fn divrem_str(a : &str, b : &str) -> (char,String) {
+    let a_num = a.parse::<i64>().unwrap();
+    let b_num = b.parse::<i64>().unwrap();
+
+    let (intdiv,rest) = divrem(a_num, b_num);
+
+    (   char::from_digit(intdiv as u32, 10).unwrap()
+      , rest.to_string()  )
 }
 
 fn divide(dividend : &str, divisor : &str) -> (String,Vec<String>) {
@@ -34,14 +43,14 @@ fn divide(dividend : &str, divisor : &str) -> (String,Vec<String>) {
         temp.push( dividend_digits.next().unwrap() );
     }
 
-    let divisor_int = divisor.parse::<i64>().unwrap();
+    //let divisor_int = divisor.parse::<i64>().unwrap();
     let mut result = String::new();
     let mut temp_results = Vec::<String>::new();
 
     loop {
-        let (intdiv,rest) = divrem(temp.parse::<i64>().unwrap(), divisor_int);
-        result.push(char::from_digit(intdiv as u32, 10).unwrap());
-        temp = rest.to_string();
+        let (resultdigit,rest) = divrem_str(temp.as_str(), divisor);
+        result.push(resultdigit);
+        temp = rest;
         
         let herunter = match dividend_digits.next() {
             None => 'R',
@@ -72,48 +81,43 @@ fn print_calculation(dividend : &str, divisor : &str, result : &str, temps : &Ve
     
 }
 
-fn read_args(args : &Vec<String>) -> Result<(String,String),String> {
+fn read_args<'a>(args : &'a Vec<String>) -> Result<(&'a str,&'a str),String> {
     
     if args.len() != 2
     {
         return Err(format!("Bitte Divident und Divisor eingeben. {} Argumente gefunden.", args.len()) )
     }
 
-    let dividend_arg = &args[0];
-    let divisor_arg  = &args[1];
-
-    if  !(is_all_digits(dividend_arg) && is_all_digits(divisor_arg)) 
+    if  !(  is_all_digits(&args[0]) 
+        &&  is_all_digits(&args[1])) 
     {
         return Err("Divident und Divisor müssen Zahlen sein".to_string())
     }
 
-    let dividend = 
-        if dividend_arg.len() > 1 {
-            dividend_arg.trim_start_matches('0').to_string()
-        }
-        else {
-            dividend_arg.to_string()
-        };
-    let divisor = divisor_arg.trim_start_matches('0').to_string();
+    let dividend = remove_leading_zeros(&args[0]);
+    let divisor = remove_leading_zeros(&args[1]);
 
-    if "0".eq(&divisor)
+    if "0".eq(divisor)
     {
         return Err("Divison durch Null scheidet völlig aus".to_string())
     }
-    else if dividend.len() < divisor.len() 
+    else if    ( dividend.len()  < divisor.len() )
+            || ( dividend.len() == divisor.len() && divisor.cmp(&dividend) == Ordering::Greater )
     {
         return Err("Dividend muß größer Divisor sein".to_string())
-    }
-    else if dividend.len() == divisor.len()
-    {
-        if dividend.cmp(&divisor) == Ordering::Greater 
-        {
-            return Err("Dividend muß größer Divisor sein".to_string())
-        }
     }
 
     Ok((dividend,divisor))
 
+}
+
+fn remove_leading_zeros(number : &str) -> &str {
+    if "0".eq(number) {
+        number
+    }
+    else {
+        number.trim_start_matches('0')
+    }
 }
 
 fn is_all_digits(val : &str) -> bool
