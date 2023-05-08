@@ -126,3 +126,43 @@ fn is_all_digits(val : &str) -> bool
     .chars()
     .all( |c| c.is_digit(10) )
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::divide;
+
+    #[test]
+    fn test_1_1() {
+        let (result,temps) = divide("1", "1");
+        assert_eq!("1", result);
+        let mut temp = temps.iter().map( |t| { t.as_str() } );
+        assert_eq!(Some("0R"), temp.next());
+        assert_eq!(None, temp.next());
+    }
+    #[test]
+    fn test_11_1() {
+        let (result,temps) = divide("11", "1");
+        assert_eq!("11", result);
+        let mut temp = temps.iter().map( |t| { t.as_str() } );
+        assert_eq!(Some("01"), temp.next());
+        assert_eq!(Some("0R"), temp.next());
+        assert_eq!(None, temp.next());
+    }
+    #[test]
+    fn test_111_10() {
+        let (result,temps) = divide("111", "10");
+        assert_eq!("11", result);
+        let mut temp = temps.iter().map( |t| { t.as_str() } );
+        assert_eq!(Some("11"), temp.next());
+        assert_eq!(Some("1R"), temp.next());
+        assert_eq!(None, temp.next());
+    }
+    #[test]
+    fn test_111_12() {
+        let (result,temps) = divide("111", "12");
+        assert_eq!("9", result);
+        let mut temp = temps.iter().map( |t| { t.as_str() } );
+        assert_eq!(Some("3R"), temp.next());
+        assert_eq!(None, temp.next());
+    }
+}
